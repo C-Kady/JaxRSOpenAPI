@@ -6,6 +6,11 @@ import java.util.List;
 import jakarta.persistence.*;
 
 @Entity
+////Requete NamedQuery
+//@NamedQuery(
+//	    name = "Client.findById",
+//	    query = "SELECT c FROM Client c WHERE c.userId = :user_id"
+//	)
 public class Client extends User implements Serializable{
 
     private List<Ticket> tickets; 
@@ -28,13 +33,4 @@ public class Client extends User implements Serializable{
 				+ email + ", tel=" + tel + ", date_naissance=" + date_naissance + ", password=" + password
 				+ ", statut_User=" + statut_user + "]";
 	}
-
-	
-//	//CONSTRUCTEURS
-//	public Client() {
-//		super();
-//	}
-//	public Client(String statutClient) {
-//		this.statutClient = statutClient;
-//	}
 }

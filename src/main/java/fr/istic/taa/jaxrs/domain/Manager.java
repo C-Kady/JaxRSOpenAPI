@@ -7,9 +7,15 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
 
 @Entity
+//Requete NamedQuery
+@NamedQuery(
+	    name = "Manager.findByEmail",
+	    query = "SELECT m FROM Manager m WHERE m.email = :emailValue"
+	)
 public class Manager extends User implements Serializable {
 	
     private List<Event> events;

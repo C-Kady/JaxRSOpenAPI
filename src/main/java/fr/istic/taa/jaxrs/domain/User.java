@@ -4,11 +4,18 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
+
+
 @Entity
-//Requete NamedQuery
 @NamedQuery(
-	    name = "User.findById",
-	    query = "SELECT u FROM User u WHERE u.userId = :user_id"
+	    name = "User.findByEmail",
+	    query = "SELECT u FROM User u WHERE u.email = :emailValue"
 	)
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User implements Serializable {
@@ -66,7 +73,9 @@ public class User implements Serializable {
 		this.tel = tel;
 	}
 
-	
+	@JsonSerialize(using = LocalDateSerializer.class)
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	public LocalDate getDate_naissance() {
 		return date_naissance;
 	}

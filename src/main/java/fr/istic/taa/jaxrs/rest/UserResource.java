@@ -6,6 +6,9 @@ import fr.istic.taa.jaxrs.dao.ManagerDao;
 import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.Manager;
 import fr.istic.taa.jaxrs.domain.User;
+import fr.istic.taa.jaxrs.dto.ConnexionDTO;
+import fr.istic.taa.jaxrs.dto.PasswordDTO;
+import fr.istic.taa.jaxrs.dto.UserResponseDTO;
 import fr.istic.taa.jaxrs.service.UserService;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
@@ -14,36 +17,53 @@ import jakarta.ws.rs.core.Response;
 @Produces({"application/json", "application/xml"})
 public class UserResource {
 	
-	private UserDao userDao = new UserDao();
-	private UserService userService  = new UserService();
-	
-	  @GET
-	  @Path("/{user_id}")
-	  public Response getUserById(@PathParam("user_id") Long user_id)  {
-	      // appel DAO
-		  User user =  userDao.findByIdNamedQuery(user_id);
-		  
-		  if(user != null){
-			  return Response.ok(user).build();
-		  }
-	      return Response.status(Response.Status.NOT_FOUND).build();
-	  }
+    private UserService userService;
 
+    public UserResource() {
+        UserDao userDao = new UserDao();
+        this.userService = new UserService(userDao);
+    }
+	
+//	  @GET
+//	  @Path("/{user_id}")
+//	  public Response getUserById(@PathParam("user_id") Long user_id)  {
+//	      // appel DAO
+//		  User user =  userDao.findOne(user_id);
+//		  
+//		  if(user != null){
+//			  return Response.ok(user).build();
+//		  }
+//	      return Response.status(Response.Status.NOT_FOUND).build();
+//	  }
+
+
+	// Modification mot de passe
+	  @PUT
+	  @Path("/updatePassword/{user_id}")
+	  public Response modifierPassword(@PathParam("user_id") Long user_id, PasswordDTO dto) {
+	      // user contient juste l'ancien et le nouveau password
+	      try {
+	          userService.changerMdp(user_id, dto);
+	          return Response.ok("Mot de passe modifié").build();
+	      } catch (Exception e) {
+	          return Response.status(400).entity(e.getMessage()).build();
+	      }
+	  }
+	  
 	  
 	  @POST
-	  @Path("/inscrire")
+	  @Path("/connexion")
 	  @Consumes("application/json")
-	  //@Parameter(description = "Pet object that needs to be added to the store", required = true) Pet pet)
-	  public Response inscription(User newUser) {
-		  try {
-			  userService.inscription(newUser);
-			  return Response.status(Response.Status.CREATED).entity(newUser).build();
-		} catch (Exception e) {
-			// TODO: handle exception
-			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
-		}
-	    // add pet
-	    //return Response.ok().entity("SUCCESS").build();
+	  public Response connection(ConnexionDTO dto) {
+
+	    // user contient juste email + password
+	    try {
+			UserResponseDTO response = userService.seConnecter(dto);
+	        return Response.ok(response).build();
+	    } catch (Exception e) {
+	        return Response.status(401).entity("Email ou mot de passe incorrect").build();
+	    }
+	    
 	  }
 
 }
