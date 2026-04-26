@@ -19,14 +19,23 @@ package fr.istic.taa.jaxrs;
 import java.util.HashSet;
 import java.util.Set;
 
-import fr.istic.taa.jaxrs.rest.ClientRessource;
-import fr.istic.taa.jaxrs.rest.PetResource;
-import fr.istic.taa.jaxrs.rest.UserResource;
+import fr.istic.taa.jaxrs.rest.*;
+import io.swagger.v3.jaxrs2.integration.resources.AcceptHeaderOpenApiResource;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 
 @ApplicationPath("/")
+//@OpenAPIDefinition(
+//	    info = @Info(
+//	        title = "API Gestion Concerts",
+//	        version = "1.0",
+//	        description = "API de gestion de concerts, tickets et utilisateurs"
+//	    )
+//	)
+//clazzes.add(AcceptHeaderOpenApiResource.class);
 public class TestApplication extends Application {
 	
 
@@ -36,12 +45,14 @@ public class TestApplication extends Application {
         final Set<Class<?>> clazzes = new HashSet<Class<?>>();
 
         clazzes.add(OpenApiResource.class);
-        clazzes.add(PetResource.class);
         clazzes.add(UserResource.class);
-        clazzes.add(ClientRessource.class);
-//        clazzes.add(AcceptHeaderOpenApiResource.class);
+        clazzes.add(ClientResource.class);
+        clazzes.add(AdminResource.class);
+        clazzes.add(ManagerResource.class);
+        clazzes.add(EventResource.class);
+        clazzes.add(TicketResource.class);
+        clazzes.add(SwaggerResource.class);
          
-
         return clazzes;
     }
 

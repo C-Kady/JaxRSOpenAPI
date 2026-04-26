@@ -1,12 +1,15 @@
 package fr.istic.taa.jaxrs.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.mindrot.jbcrypt.BCrypt;
 import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.*;
 import fr.istic.taa.jaxrs.domain.User;
-import fr.istic.taa.jaxrs.dto.ConnexionDTO;
-import fr.istic.taa.jaxrs.dto.PasswordDTO;
-import fr.istic.taa.jaxrs.dto.UserResponseDTO;
+import fr.istic.taa.jaxrs.dto.ConnexionDto;
+import fr.istic.taa.jaxrs.dto.PasswordDto;
+import fr.istic.taa.jaxrs.dto.UserResponseDto;
 
 public class UserService {
     
@@ -19,7 +22,7 @@ public class UserService {
 	
 
 	//1-Methode seConnecter
-	public UserResponseDTO seConnecter(ConnexionDTO dto) {
+	public UserResponseDto seConnecter(ConnexionDto dto) {
 	    // 1. On demande au DAO de nous donner l'utilisateur par son email
 	    User user = userDao.findByEmailNamedQuery(dto.getEmail());
 
@@ -27,46 +30,31 @@ public class UserService {
 	        throw new RuntimeException("Utilisateur non trouvé");
 	    }
 
-	    // 2. C'est ICI qu'on utilise la fonction de comparaison
-	    // On ne fait JAMAIS "if (motDePasseSaisi == user.getPassword())"
+	    // 2. on va utiliser la fonction de comparaison
 	    boolean match = BCrypt.checkpw(dto.getPassword(), user.getPassword());
 
 	    if (!match) {
 	        throw new RuntimeException("Mot de passe incorrect");
 	    }
-	    
-
-	    String role = null;
-	    if (user instanceof Client) {
-	        role = "CLIENT";
-	    } else if (user instanceof Manager) {
-	        role = "MANAGER";
-	    } else if (user instanceof Admin) {
-	        role = "ADMIN";
-	    }
 
 	    
-        // Mapper vers DTO de réponse
-	    UserResponseDTO response = new UserResponseDTO();
+        // 3. Mapper vers UserResponseDTO 
+	    UserResponseDto response = new UserResponseDto();
         response.setId(user.getUserId());
         response.setNom(user.getNom());
         response.setPrenom(user.getPrenom());
         response.setEmail(user.getEmail());
-        response.setTel(user.getTel());
+        response.setTelephone(user.getTelephone());
         response.setStatut_user(user.isStatut_user());
         response.setDate_naissance(user.getDate_naissance());
-        
-        response.setRole(role); //### A revoir
+        response.setRole(user.getRole()); 
         
         return response; // Connexion réussie
 	}
-	
-	//Déconnexion	Invalide la session en cours ou supprime le token (pas besoin du DAO ici en général).
-
 
 
 	//2- Modifier MDP
-	public void changerMdp(Long user_id, PasswordDTO dto) throws Exception {
+	public void changerMdp(Long user_id, PasswordDto dto) throws Exception {
 	
 	    User user = userDao.findOne(user_id);
 
@@ -77,7 +65,7 @@ public class UserService {
 	    boolean match = BCrypt.checkpw(dto.getOldPassword(), user.getPassword());
 
 	    if (!match) {
-	        throw new RuntimeException("Ancien mot de passe incorrect");
+	        throw new RuntimeException("Ancien mot de passe incorrect  ou données invalides");
 	    }
 
 	    String hashed = BCrypt.hashpw(dto.getNewPassword(), BCrypt.gensalt());
@@ -85,5 +73,25 @@ public class UserService {
 	    
 	    this.userDao.update(user);
 	    
+	}
+	
+
+	//3- Liste des utilisateurs
+	public List<UserResponseDto> listeUtilisateurs() {
+	    List<User> users = userDao.findAllUser();
+	    List<UserResponseDto> dtos = new ArrayList<>();
+
+	    for (User u : users) {
+	        UserResponseDto dto = new UserResponseDto();
+	        dto.setId(u.getUserId());
+	        dto.setNom(u.getNom());
+	        dto.setPrenom(u.getPrenom());
+	        dto.setEmail(u.getEmail());
+	        dto.setTelephone(u.getTelephone());
+	        dto.setRole(u.getRole());
+	        dto.setStatut_user(u.isStatut_user());
+	        dtos.add(dto);
+	    }
+	    return dtos;
 	}
 }

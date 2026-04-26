@@ -10,35 +10,6 @@ public class ClientDao extends AbstractJpaDao<Long, Client>{
 		this.setClazz(Client.class);
 	}
 	
-	
-////Requete avec JPQL
-//	public Client findByEmail(String email) {
-//		
-//	    String query_jpql = "SELECT c FROM Client c WHERE c.email = :emailValue";
-//	    try {
-//	        return entityManager.createQuery(query_jpql, Client.class)
-//	                .setParameter("emailValue", email)
-//	                .getSingleResult();
-//	    } catch (NoResultException e) {
-//	        // Retourne null si aucun utilisateur n'est trouvé
-//	        return null; 
-//	    }
-//	}  
-//	
-	
-	
-	//Requete NamedQuery
-//	public Client findByIdNamedQuery(Long id) {
-//        	try {
-//        		return entityManager
-//	        		.createNamedQuery("Client.findById", Client.class)
-//	                .setParameter("user_id", id)
-//	                .getSingleResult();
-//			} catch (NoResultException e) {
-//		        // Retourne null si aucun utilisateur n'est trouvé
-//		        return null; 
-//			}
-//    }
 //	
 //	// Criteria Query : On construit la requête avec du code Java. 
 //	public List<Client> findAllUser() {

@@ -3,22 +3,31 @@ package fr.istic.taa.jaxrs.domain;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 
 @Entity
-////Requete NamedQuery
-//@NamedQuery(
-//	    name = "Client.findById",
-//	    query = "SELECT c FROM Client c WHERE c.userId = :user_id"
-//	)
 public class Client extends User implements Serializable{
 
+	private boolean client_newsletter = false;
+	
+	@OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST)
+	@JsonManagedReference
     private List<Ticket> tickets; 
 
 	
 	//GETTERS - SETTERS
 	
-    @OneToMany(mappedBy = "client", cascade = CascadeType.PERSIST)
+
+	public boolean isClient_newsletter() {
+		return client_newsletter;
+	}
+	public void setClient_newsletter(boolean client_newsletter) {
+		this.client_newsletter = client_newsletter;
+	}
+	
+	
     public List<Ticket> getTickets() {
         return tickets;
     }
@@ -30,7 +39,8 @@ public class Client extends User implements Serializable{
 	@Override
 	public String toString() {
 		return "Client [tickets=" + tickets + ", userId=" + userId + ", nom=" + nom + ", prenom=" + prenom + ", email="
-				+ email + ", tel=" + tel + ", date_naissance=" + date_naissance + ", password=" + password
+				+ email + ", telephone=" + telephone + ", date_naissance=" + date_naissance + ", password=" + password
 				+ ", statut_User=" + statut_user + "]";
 	}
+	
 }

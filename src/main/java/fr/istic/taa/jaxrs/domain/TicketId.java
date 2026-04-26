@@ -15,7 +15,7 @@ public class TicketId implements Serializable {
     public TicketId() {
     	super();
     }
-    public TicketId(int userId, int eventId) {
+    public TicketId(Long userId, Long eventId) {
         this.userId = userId;
         this.eventId = eventId;
     }

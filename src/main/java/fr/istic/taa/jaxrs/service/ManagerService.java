@@ -1,9 +1,11 @@
 package fr.istic.taa.jaxrs.service;
 
 import org.mindrot.jbcrypt.BCrypt;
-
 import fr.istic.taa.jaxrs.dao.*;
 import fr.istic.taa.jaxrs.domain.*;
+import fr.istic.taa.jaxrs.domain.enumeration.Role;
+import fr.istic.taa.jaxrs.dto.EnregistrerManagerDto;
+import fr.istic.taa.jaxrs.dto.UserResponseDto;
 
 public class ManagerService {  
 	
@@ -15,15 +17,43 @@ public class ManagerService {
         this.userDao = userDao;
     }
 	
-	//1-Methode metier inscrire Manager
-	public void inscriptionManager(Manager manager) throws Exception {
+	//1-Methode metier ajouter Manager
+	public UserResponseDto ajouterManager(EnregistrerManagerDto dto) throws Exception {
 		
-	    if (this.userDao.findByEmailNamedQuery(manager.getEmail()) != null) {
+	    if (this.userDao.findByEmailNamedQuery(dto.getEmail()) != null) {
 	        throw new Exception("Email déjà utilisé");
 	    }
+
+	    Manager manager = new Manager();
+	    
+	    manager.setNom(dto.getNom());
+	    manager.setPrenom(dto.getPrenom());
+	    manager.setEmail(dto.getEmail());
+	    manager.setTelephone(dto.getTelephone());
+	    manager.setDate_naissance(dto.getDate_naissance());
+	    manager.setRole(Role.MANAGER);
+	    manager.setManager_agence(dto.getManager_agence());
+	    
 	    String tempPassword = manager.getNom()+("123"); // ex: "Kouassi123"
 	    manager.setPassword(BCrypt.hashpw(tempPassword, BCrypt.gensalt())); 
-	    this.managerDao.save(manager); // Appel simple au DAO
+	    
+	    this.managerDao.save(manager); 
+	    
+
+	    
+        // Mapper vers DTO de réponse
+	    UserResponseDto response = new UserResponseDto();
+        response.setId(manager.getUserId());
+        response.setNom(manager.getNom());
+        response.setPrenom(manager.getPrenom());
+        response.setEmail(manager.getEmail());
+        response.setTelephone(manager.getTelephone());
+        response.setStatut_user(manager.isStatut_user());
+        response.setDate_naissance(manager.getDate_naissance());
+        response.setRole(manager.getRole());
+        response.setManager_agence(manager.getManager_agence());
+        
+        return response;
 	}
 
 

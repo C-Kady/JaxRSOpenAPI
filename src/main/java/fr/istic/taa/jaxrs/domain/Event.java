@@ -1,151 +1,196 @@
 package fr.istic.taa.jaxrs.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+
 import jakarta.persistence.*;
 
 @Entity
+//Requete NamedQuery
+@NamedQuery(
+	    name = "Event.findByDateEvent",
+	    query = "SELECT e FROM Event e WHERE e.date_concert = :dateConcert"
+	)
 public class Event implements Serializable {
 
+	@Id
+    @GeneratedValue
     private long eventId;
 	private String nom;
     private String description;
     private String artiste;
     private String lieu;
-    private LocalDate dateConcert;
+    private int dureeConcert;
     private String genreMusical;
-    private int nbPlaceDispo;
-    private String dureeConcert;
-    private String statut;
-    private LocalDate dateValidation;
-    private String commentairesAdmin;
-    private Manager manager;
-    private Admin admin;
-    private List<Ticket> tickets;
+    private int nb_place_disponible;
+    private boolean statut_concert = true;
+
+    @Column(precision = 8, scale = 2)
+    private BigDecimal prix_ticket;
     
+    @JsonSerialize(using = LocalDateSerializer.class)
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate date_concert;
+
+    @ManyToOne
+    @JoinColumn(name = "managerId", nullable = false)
+    @JsonBackReference
+    private Manager manager;
+
+    @ManyToOne
+    @JoinColumn(name = "adminId", nullable = false)
+    @JsonBackReference
+    private Admin admin;
+
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.PERSIST)
+	@JsonManagedReference
+    private List<Ticket> tickets;
+
     
     //GETTERS - SETTERS
-	@Id
-    @GeneratedValue
-    public long getEventId() {
+
+	public long getEventId() {
 		return eventId;
 	}
 	public void setEventId(long eventId) {
 		this.eventId = eventId;
 	}
 
-    @ManyToOne
-    public Manager getManager() {
-		return manager;
-	}
-	public void setManager(Manager manager) {
-		this.manager = manager;
-	}
 
-    @ManyToOne
-    public Admin getAdmin() {
-		return admin;
-	}
-	public void setAdmin(Admin admin) {
-		this.admin = admin;
-	}
-	
-
-    @OneToMany(mappedBy = "event", cascade = CascadeType.PERSIST)
-    public List<Ticket> getTickets() { 
-    	return tickets; 
-    }
-    public void setTickets(List<Ticket> tickets) { 
-    	this.tickets = tickets; 
-    }
-    
-    
 	public String getNom() {
 		return nom;
 	}
 	public void setNom(String nom) {
 		this.nom = nom;
 	}
-	
+
+
 	public String getDescription() {
 		return description;
 	}
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
+
 	public String getArtiste() {
 		return artiste;
 	}
 	public void setArtiste(String artiste) {
 		this.artiste = artiste;
 	}
-	
+
+
 	public String getLieu() {
 		return lieu;
 	}
 	public void setLieu(String lieu) {
 		this.lieu = lieu;
 	}
-	
-	public LocalDate getDateConcert() {
-		return dateConcert;
+
+
+	public int getDureeConcert() {
+		return dureeConcert;
 	}
-	public void setDateConcert(LocalDate dateConcert) {
-		this.dateConcert = dateConcert;
+	public void setDureeConcert(int dureeConcert) {
+		this.dureeConcert = dureeConcert;
 	}
-	
+
+
 	public String getGenreMusical() {
 		return genreMusical;
 	}
 	public void setGenreMusical(String genreMusical) {
 		this.genreMusical = genreMusical;
 	}
-	
-	public int getNbPlaceDispo() {
-		return nbPlaceDispo;
+
+
+	public int getNb_place_disponible() {
+		return nb_place_disponible;
 	}
-	public void setNbPlaceDispo(int nbPlaceDispo) {
-		this.nbPlaceDispo = nbPlaceDispo;
+	public void setNb_place_disponible(int nb_place_disponible) {
+		this.nb_place_disponible = nb_place_disponible;
 	}
-	
-	public String getDureeConcert() {
-		return dureeConcert;
+
+
+	public boolean isStatut_concert() {
+		return statut_concert;
 	}
-	public void setDureeConcert(String dureeConcert) {
-		this.dureeConcert = dureeConcert;
+	public void setStatut_concert(boolean statut_concert) {
+		this.statut_concert = statut_concert;
 	}
-	
-	public String getStatut() {
-		return statut;
+
+
+	public BigDecimal getPrix_ticket() {
+		return prix_ticket;
 	}
-	public void setStatut(String statut) {
-		this.statut = statut;
+	public void setPrix_ticket(BigDecimal prix_ticket) {
+		this.prix_ticket = prix_ticket;
 	}
-	
-	public LocalDate getDateValidation() {
-		return dateValidation;
+
+
+	public LocalDate getDate_concert() {
+		return date_concert;
 	}
-	public void setDateValidation(LocalDate dateValidation) {
-		this.dateValidation = dateValidation;
+	public void setDate_concert(LocalDate date_concert) {
+		this.date_concert = date_concert;
 	}
-	
-	public String getCommentairesAdmin() {
-		return commentairesAdmin;
+
+
+	public Manager getManager() {
+		return manager;
 	}
-	public void setCommentairesAdmin(String commentairesAdmin) {
-		this.commentairesAdmin = commentairesAdmin;
+	public void setManager(Manager manager) {
+		this.manager = manager;
 	}
+
+
+	public Admin getAdmin() {
+		return admin;
+	}
+	public void setAdmin(Admin admin) {
+		this.admin = admin;
+	}
+
+
+	public List<Ticket> getTickets() {
+		return tickets;
+	}
+	public void setTickets(List<Ticket> tickets) {
+		this.tickets = tickets;
+	}
+
 	
     //ToString Event
 	@Override
 	public String toString() {
 		return "Event [eventId=" + eventId + ", nom=" + nom + ", description=" + description + ", artiste=" + artiste
-				+ ", lieu=" + lieu + ", dateConcert=" + dateConcert + ", genreMusical=" + genreMusical
-				+ ", nbPlaceDispo=" + nbPlaceDispo + ", dureeConcert=" + dureeConcert + ", statut=" + statut
-				+ ", dateValidation=" + dateValidation + ", commentairesAdmin=" + commentairesAdmin + ", manager="
-				+ manager + ", admin=" + admin + ", tickets=" + tickets + "]";
+				+ ", lieu=" + lieu + ", dureeConcert=" + dureeConcert + ", genreMusical=" + genreMusical
+				+ ", nb_place_disponible=" + nb_place_disponible + ", statut_concert=" + statut_concert
+				+ ", prix_ticket=" + prix_ticket + ", date_concert=" + date_concert + ", manager=" + manager
+				+ ", admin=" + admin + ", tickets=" + tickets + "]";
 	}
+	
+	
+    // diminuer le nombre de places disponibles
+	public void diminuerPlaces() {
+	    if (this.nb_place_disponible <= 0) {
+	        throw new IllegalArgumentException("Plus de places disponibles");
+	    }
+	    this.nb_place_disponible--;
+	}
+	
     
 }

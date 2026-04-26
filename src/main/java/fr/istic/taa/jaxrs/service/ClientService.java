@@ -5,6 +5,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import fr.istic.taa.jaxrs.dao.ClientDao;
 import fr.istic.taa.jaxrs.dao.UserDao;
 import fr.istic.taa.jaxrs.domain.Client;
+import fr.istic.taa.jaxrs.domain.enumeration.Role;
 import fr.istic.taa.jaxrs.dto.*;
 
 public class ClientService {
@@ -19,8 +20,8 @@ public class ClientService {
     }
     
     
-	//1-Methode metier S'inscrire
-	public UserResponseDTO inscription(InscriptionDTO dto) throws Exception {
+	//Methode metier S'inscrire
+	public UserResponseDto inscription(InscriptionClientDto dto) throws Exception {
 		
 	    if (this.userDao.findByEmailNamedQuery(dto.getEmail()) != null) {
 	        throw new Exception("Email déjà utilisé");
@@ -31,9 +32,10 @@ public class ClientService {
 	    client.setNom(dto.getNom());
 	    client.setPrenom(dto.getPrenom());
 	    client.setEmail(dto.getEmail());
-	    client.setTel(dto.getTel());
+	    client.setTelephone(dto.getTelephone());
 	    client.setDate_naissance(dto.getDate_naissance());
-	    client.setStatut_user(true);
+	    client.setClient_newsletter(dto.isClient_newsletter());
+	    client.setRole(Role.CLIENT);
 	    
 	    String hashed = BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt());
 	    client.setPassword(hashed);
@@ -41,20 +43,19 @@ public class ClientService {
 	    this.clientDao.save(client); // Appel simple au DAO
 	    
         // Mapper vers DTO de réponse
-	    UserResponseDTO response = new UserResponseDTO();
+	    UserResponseDto response = new UserResponseDto();
         response.setId(client.getUserId());
         response.setNom(client.getNom());
         response.setPrenom(client.getPrenom());
         response.setEmail(client.getEmail());
-        response.setTel(client.getTel());
+        response.setTelephone(client.getTelephone());
         response.setStatut_user(client.isStatut_user());
         response.setDate_naissance(client.getDate_naissance());
-        
-        response.setRole("CLIENT"); //### A revoir
+        response.setRole(client.getRole());
+        response.setClient_newsletter(client.isClient_newsletter());
         
         return response;
 	}
 	
-	//2-Methode metier Se Connecter (voir User)
 
 }

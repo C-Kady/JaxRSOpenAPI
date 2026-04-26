@@ -1,13 +1,9 @@
 package fr.istic.taa.jaxrs.dao;
 
-import java.util.Collections;
 import java.util.List;
-
 import fr.istic.taa.jaxrs.dao.generic.AbstractJpaDao;
 import fr.istic.taa.jaxrs.domain.Ticket;
 import fr.istic.taa.jaxrs.domain.TicketId;
-import fr.istic.taa.jaxrs.domain.User;
-import jakarta.persistence.NoResultException;
 
 public class TicketDao extends AbstractJpaDao<TicketId, Ticket> {
 
@@ -16,30 +12,22 @@ public class TicketDao extends AbstractJpaDao<TicketId, Ticket> {
     }
 	
 	//Requete NamedQuery
-	public List<Ticket> findByUserIdNamedQuery(Long id) {
-        	try {
-        		return entityManager
-	        		.createNamedQuery("Ticket.findByUserId", Ticket.class)
-	                .setParameter("user_id", id)
-	                .getResultList();
-			} catch (NoResultException e) {
-		        // Retourne liste vide si aucun utilisateur n'est trouvé
-				return Collections.emptyList();
-			}
+	public List<Ticket> findByClientIdNamedQuery(Long id) {
+		
+		return entityManager
+			.createNamedQuery("Ticket.findByClientId", Ticket.class)
+	        .setParameter("client_id", id)
+	        .getResultList();
     }
 
-    // Requête pour voir qui vient à un concert
+    // Requête JPQL
     public List<Ticket> findByEventId(Long eid) {
 	    String query_jpql = "SELECT t FROM Ticket t WHERE t.event.eventId = :event_id";
-    	try {
+    	
             return entityManager
             		.createQuery(query_jpql, Ticket.class)
                     .setParameter("event_id", eid)
-                    .getResultList();
-			
-		} catch (Exception e) {
-			return Collections.emptyList();
-		}
+                    .getResultList();  
     }
 	
 //	save(Ticket t)
