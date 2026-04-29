@@ -25,10 +25,10 @@ Il s'agit d'une application de gestion de tickets :  permettre aux managers de m
 Une fois le projet cloné
 1. Faire **git checkout back** depuis la racine du projet.
 2. Faire un Maven build du projet (qui se trouve dans Run As)
-2. Creer juste une BD nommée mydatabase dans votre SGBD ou Configurer la base de données dans "src/main/resources/META-INF/persistence.xml" 
+3. Creer juste une BD nommée mydatabase dans votre SGBD ou Configurer la base de données dans "src/main/resources/META-INF/persistence.xml" 
 	avec les donnees de votre serveur mysql
-3. Lancer le Run de la classe "src/main/java/fr.istic..../jpa/JpaTest"
-4. Déployer le serveur en faisant un Run de la classe "src/main/java/fr.istic..../rest/RestServer"
+4. Lancer le Run de la classe "src/main/java/fr.istic..../jpa/JpaTest"
+5. Déployer le serveur en faisant un Run de la classe "src/main/java/fr.istic..../rest/RestServer"
 
 ## Quelque Endpoints
 | Méthode | URL | Description |
